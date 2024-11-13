@@ -1,4 +1,5 @@
 import threading
+import asyncio
 from flask import Flask, request, jsonify
 import subprocess
 import os
@@ -63,10 +64,16 @@ def enhance_image(input_path):
 
     return output_path
 
-def run_webhook():
-    """Run webhook setup in a separate thread"""
+async def set_webhook_async():
+    """Asynchronously set the webhook."""
     webhook_url = 'https://your-server-ip-or-domain/webhook'  # Replace with your actual server URL
-    bot.set_webhook(url=webhook_url)
+    await bot.set_webhook(url=webhook_url)
+
+def run_webhook():
+    """Run the asynchronous webhook setting in a background thread."""
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    loop.run_until_complete(set_webhook_async())
 
 if __name__ == '__main__':
     # Ensure the output directory exists
