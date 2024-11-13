@@ -1,17 +1,16 @@
 import threading
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify
 import subprocess
 import os
-from werkzeug.utils import secure_filename
 import uuid
 import telegram
-from io import BytesIO
+from werkzeug.utils import secure_filename
 
 # Flask app initialization
 app = Flask(__name__)
 
 # Telegram Bot Token and API setup
-TOKEN = '7638229482:AAEU9eVchpJco0FhOR1f3Xn6t1oQjwt9a2s'  # Yahan apna Telegram bot token daalein
+TOKEN = '7638229482:AAEU9eVchpJco0FhOR1f3Xn6t1oQjwt9a2s'  # Replace with your bot's token
 bot = telegram.Bot(token=TOKEN)
 
 # Set the maximum file size for uploading (e.g., 10MB)
