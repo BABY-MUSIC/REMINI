@@ -1,3 +1,4 @@
+import threading
 from flask import Flask, request, jsonify, send_file
 import subprocess
 import os
@@ -63,14 +64,19 @@ def enhance_image(input_path):
 
     return output_path
 
+def run_webhook():
+    """Run webhook setup in a separate thread"""
+    webhook_url = 'https://your-server-ip-or-domain/webhook'  # Replace with your actual server URL
+    bot.set_webhook(url=webhook_url)
+
 if __name__ == '__main__':
     # Ensure the output directory exists
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
-    # Set webhook for Telegram bot
-    webhook_url = 'https://your-server-ip-or-domain/webhook'
-    bot.set_webhook(url=webhook_url)
+    # Set webhook for Telegram bot in a background thread
+    thread = threading.Thread(target=run_webhook)
+    thread.start()
 
     # Run the Flask server
     app.run(debug=True, host='0.0.0.0', port=5000)
