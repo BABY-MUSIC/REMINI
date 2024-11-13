@@ -69,24 +69,30 @@ async def set_webhook_async():
     webhook_url = 'https://your-public-url/webhook'  # Replace with your actual server URL
     await bot.set_webhook(url=webhook_url)
 
+async def check_webhook():
+    """Asynchronously check the webhook info."""
+    webhook_info = await bot.get_webhook_info()
+    return webhook_info
+
 def run_webhook():
     """Run the asynchronous webhook setting in a background thread."""
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(set_webhook_async())
+
+    # Check if the webhook is already set, if not, set it
+    webhook_info = loop.run_until_complete(check_webhook())
+    
+    if not webhook_info.url:
+        loop.run_until_complete(set_webhook_async())
 
 if __name__ == '__main__':
     # Ensure the output directory exists
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
-    # Check if the webhook is already set to avoid multiple calls
-    # You can use bot.get_webhook_info() to check if the webhook is already set.
-    webhook_info = bot.get_webhook_info()
-    if not webhook_info.url:
-        # Set webhook for Telegram bot in a background thread if not set
-        thread = threading.Thread(target=run_webhook)
-        thread.start()
+    # Set webhook for Telegram bot in a background thread if not set
+    thread = threading.Thread(target=run_webhook)
+    thread.start()
 
     # Run the Flask server
     app.run(debug=True, host='0.0.0.0', port=5000)
