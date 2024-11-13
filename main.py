@@ -66,7 +66,7 @@ def enhance_image(input_path):
 
 async def set_webhook_async():
     """Asynchronously set the webhook."""
-    webhook_url = 'https://your-server-ip-or-domain/webhook'  # Replace with your actual server URL
+    webhook_url = 'https://your-public-url/webhook'  # Replace with your actual server URL
     await bot.set_webhook(url=webhook_url)
 
 def run_webhook():
@@ -80,9 +80,13 @@ if __name__ == '__main__':
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
-    # Set webhook for Telegram bot in a background thread
-    thread = threading.Thread(target=run_webhook)
-    thread.start()
+    # Check if the webhook is already set to avoid multiple calls
+    # You can use bot.get_webhook_info() to check if the webhook is already set.
+    webhook_info = bot.get_webhook_info()
+    if not webhook_info.url:
+        # Set webhook for Telegram bot in a background thread if not set
+        thread = threading.Thread(target=run_webhook)
+        thread.start()
 
     # Run the Flask server
     app.run(debug=True, host='0.0.0.0', port=5000)
